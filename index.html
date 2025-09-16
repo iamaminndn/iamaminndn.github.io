@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Interaktif untuk Anak SD</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        h1 {
+            color: #4b7bec;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .question-container {
+            margin-bottom: 25px;
+            padding: 20px;
+            border: 3px solid #e0e0e0;
+            border-radius: 15px;
+            background-color: #fff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+            font-size: 16px;
+        }
+        
+        .option:hover {
+            background-color: #e6f7ff;
+            border-color: #a1c6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        .explanation {
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+            display: none;
+            border-left: 5px solid #4b7bec;
+        }
+        
+        .result-feedback {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+        
+        .correct-feedback {
+            color: #28a745;
+        }
+        
+        .incorrect-feedback {
+            color: #dc3545;
+        }
+        
+        .feedback-icon {
+            margin-right: 12px;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .explanation-points {
+            margin-left: 20px;
+        }
+        
+        .explanation-points div {
+            margin-bottom: 8px;
+            padding-left: 5px;
+        }
+        
+        .correct-point {
+            color: #28a745;
+        }
+        
+        .incorrect-point {
+            color: #dc3545;
+        }
+        
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            background-color: #4b7bec;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: #3867d6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .score-container {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #4b7bec;
+            padding: 15px;
+            background-color: #f0f8ff;
+            border-radius: 10px;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background-color: #eee;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4b7bec 0%, #3867d6 100%);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .question-number {
+            text-align: center;
+            font-size: 18px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .celebrate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+        }
+        
+        .celebrate-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .celebrate h2 {
+            color: #4b7bec;
+            font-size: 36px;
+        }
+        
+        .celebrate p {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+        
+        .close-btn {
+            background-color: #4b7bec;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Latihan CIA</h1>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+        </div>
+        
+        <div class="question-number" id="question-number"></div>
+        
+        <div id="question-container"></div>
+        
+        <div class="navigation">
+            <button id="prev-btn" onclick="prevQuestion()">← Sebelumnya</button>
+            <button id="next-btn" onclick="nextQuestion()">Selanjutnya →</button>
+        </div>
+        
+        <div class="score-container" id="score-container"></div>
+    </div>
+
+    <div class="celebrate" id="celebrate">
+        <div class="celebrate-content">
+            <h2>Selamat! 🎉</h2>
+            <p>Anda telah menyelesaikan kuis!</p>
+            <p id="final-score"></p>
+            <button class="close-btn" onclick="closeCelebration()">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // Data soal kuis (60 soal)
+        const questions = [
+            {
+                question: "Apa yang dimaksud dengan “ekosistem laut”?",
+                options: ["Tempat tinggal banyak hewan di darat", "Hubungan antara makhluk hidup dan lingkungannya di laut", "Tempat nelayan menjaring ikan di Sungai", "d.	Tempat banyak pohon kelapa di pantai"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Ekosistem laut adalah hubungan antara makhluk hidup di laut dengan lingkungannya.",
+					"Contohnya: ikan, udang, rumput laut, dan terumbu karang hidup bersama di laut. Mereka saling membutuhkan dan juga bergantung pada air laut, cahaya matahari, dan pasir laut."
+                ]
+            },
+            {
+                question: "Salah satu manfaat laut bagi manusia adalah...",
+                options: ["Menghasilkan oksigen dan membantu mengatur iklim Bumi", "Membuat kita takut melewati jembatan", "Mengurangi jumlah awan di langit", "Menyebabkan banjir"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Di laut ada tumbuhan kecil sekali namanya fitoplankton. Walau kecil, jumlahnya sangat banyak di seluruh laut di dunia.",
+                    "Fitoplankton ini menghasilkan oksigen terbanyak di bumi, bahkan lebih banyak daripada pohon di darat 🌳. Jadi, udara segar yang kita hirup sebagian besar asalnya dari laut.",
+                    "Laut juga membantu menjaga suhu bumi. Air laut menyimpan panas matahari lalu melepaskannya pelan-pelan, sehingga bumi tidak terlalu panas atau terlalu dingin."
+                ]
+            },
+            {
+                question: "Hewan laut yang memiliki cangkang keras dan berjalan di dasar laut disebut...",
+                options: ["Ikan", "Moluska/Siput", "Paus", "Lumba-lumba"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+					"Moluska seperti siput laut punya cangkang keras dan merayap di dasar laut.",
+                    "Ikan tidak bercangkang dan Dia bernafas dengan insang",
+                    "Paus dan Lumba-lumba itu mamalia (hewan yang menyusui), dan dia tidak bercangkang. Paus lebih besar dari lumba-lumba Loh"
+                ]
+            },
+            {
+                question: "Salah satu ancaman terhadap kelestarian laut adalah...",
+                options: ["Penanaman terumbu karang", "Polusi plastik yang dibuang ke laut", "Nelayan menggunakan perahu kecil", "Berjemur di pantai"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+					"Plastik di laut berbahaya karena bisa dimakan hewan laut hingga mati.",
+                    "Penanaman terumbu karang → justru bagus, membantu laut",
+                    "Nelayan menggunakan perahu kecil → tidak merusak laut",
+                    "Berjemur di pantai → hanya aktivitas manusia, tidak merusak laut"
+                ]
+            },
+            {
+                question: "Terumbu karang penting karena...",
+                options: ["Tempat wisata dan rumah bagi ikan-ikan kecil", "Tidak ada apa-apa di dalamnya", "Membantu membuat ombak besar untuk surfing saja", "Bisa dimakan"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+					"Terumbu karang jadi rumah ikan, tempat berkembang biak, dan juga wisata.",
+                    "Terumbu karang penuh kehidupan didalamnya, dan dia lebih dari hanya untuk surfing, serta jangan dimakan yah..."
+                ]
+            },
+            {
+                question: "Laut adalah…",
+                options: ["Danau besar", "Kumpulan air asin yang sangat luas", "Sungai panjang", "Kolam ikan besar"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+					"Laut itu luas sekali dan airnya asin.",
+                    "Danau besar adalah air tawar yang tenang dan luas, bukan air asin seperti laut.",
+                    "Sungai panjang adalah air yang mengalir dari tempat awal sungai muncul, biasanya di gunung atau pegunungan. Airnya masih kecil dan jernih biasa disebut hulu ke ujung sungai atau disebut hilir sampai masuk ke laut dan menyatu dengan air laut.",
+                    "Kolam ikan besar adalah tempat buatan manusia untuk memelihara ikan, ukurannya kecil dibanding laut."
+                ]
+            },
+            {
+                question: "Air laut rasanya asin karena mengandung...",
+                options: ["Gula", "Garam Mineral", "Minyak", "Pasir"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Air laut asin karena ada garam dari batuan yang larut ke laut",
+                    "Gula → gula tidak ada di laut.",
+                    "Minyak → minyak tidak membuat air jadi asin.",
+                    "Pasir → pasir tidak larut membuat rasa asin."
+                ]
+            },
+            {
+                question: "Hewan laut terbesar di dunia adalah... ",
+                options: ["Paus biru", "Hiu putih", "Lumba-lumba", "Penyu hijau"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Paus biru bisa sepanjang 30 meter, lebih besar dari semua hewan lain",
+                    "Hiu Putih besar tapi tidak lebih besar dari Paus biru, serta Lumba-lumba dan penyu hijau juga lebih kecil lagi dibandingkan Paus biru"
+                ]
+            },
+            {
+                question: "Terumbu karang berfungsi sebagai...",
+                options: ["Tempat tinggal ikan dan hewan kecil laut", "Batu besar di laut", "Tempat berenang manusia", "Tempat menyimpan pasir"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Banyak ikan kecil berlindung dan hidup di terumbu karang.",
+                    "Terumbu karang itu juga makhluk hidup, bukan batu atau tempat berenang manusia bukan juga tempat menyimpan pasir"
+                ]
+            },
+            {
+                question: "Manfaat laut bagi manusia adalah...",
+                options: ["Memberikan oksigen dan sumber makanan", "Membuat udara panas", "Menyebabkan banjir", "Menimbulkan polusi"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Laut memberi ikan untuk dimakan dan menghasilkan oksigen",
+                    "Laut bermanfaat karena menyejukkan udara, bukan membuat panas, banjir (banjir itu bencana bukan manfaat), atau polusi (polusi itu dari manusia)."
+                ]
+            },
+            {
+                question: "Hewan laut yang bisa menyemprotkan tinta untuk melindungi diri adalah...",
+                options: ["Gurita", "Kepiting", "Bintang Laut", "Hiu"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Gurita mengeluarkan tinta supaya musuh bingung lalu kabur.",
+                    "Kepiting → melindungi diri dengan capit.",
+                    "Bintang laut → melindungi diri dengan memutus lengan.",
+                    "Hiu → melindungi diri dengan gigi tajam."
+                ]
+            },
+            {
+                question: "Sampah plastik di laut berbahaya karena...",
+                options: ["Bisa dimakan ikan dan membuat mereka mati", "Membuat laut jadi lebih asin", "Menjadi rumah ikan", "Mengubah laut jadi daratan"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Ikan bisa salah makan plastik, tubuhnya rusak lalu mati.",
+                    "Membuat laut jadi lebih asin → salah, asin karena garam.",
+                    "Menjadi rumah ikan → salah, justru berbahaya.",
+                    "Mengubah laut jadi daratan → tidak mungkin."
+                ]
+            },
+            {
+                question: "Lumba-lumba bernafas dengan...",
+                options: ["Insang", "Paru-paru", "Kulit", "Sirip"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Lumba-lumba mamalia, jadi bernapas dengan paru-paru dan naik ke permukaan untuk udara.",
+                    "Insang → dipakai ikan, bukan lumba-lumba",
+                    "Kulit → dipakai cacing untuk bernapas",
+                    "Sirip → dipakai untuk berenang, bukan bernapas"
+                ]
+            },
+            {
+                question: "Benda berikut yang tidak berasal dari laut adalah...",
+                options: ["Ikan", "Garam", "Minyak", "Kapas"],
+                answer: 3,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Kapas berasal dari tanaman di darat.",
+                    "Ikan, Garam dan Minyak bumi lepas pantai jelas dari laut"
+                ]
+            },
+            {
+                question: "Hewan laut yang memiliki cangkang keras dan berjalan menyamping adalah...",
+                options: ["Kepiting", "Paus", "Hiu", "Lumba-lumba"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Kepiting jalannya menyamping dan punya cangkang keras.",
+                    "Paus, Hiu, dan Lumba-lumba tidak punya cangkang"
+                ]
+            },
+            {
+                question: "Air yang ada di bumi sebagian besar berasal dari...",
+                options: ["Sungai", "Danau", "Laut", "Sumur"],
+                answer: 2,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Air Bumi paling banyak berada di Laut, karena bumi kita 70% sampai 71% nya adalah Laut"
+                ]
+            },
+            {
+                question: "Air termasuk sumber daya alam yang harus...",
+                options: ["Diabaikan", "Dijaga dan digunakan dengan bijak", "Dihabiskan", "Dibuang"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Air penting untuk hidup, jadi harus dipakai secukupnya."
+                ]
+            },
+            {
+                question: "Wujud air ada tiga, yaitu ...",
+                options: ["Cair, padat, gas", "Panas, dingin, sejuk", "Hujan, embun, salju", "Sungai, laut, danau"],
+                answer: 0,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Cair = air minum, padat = es, gas = uap air.",
+                    "Panas, dingin, sejuk → itu rasa suhu.",
+                    "Hujan, embun, salju → itu contoh peristiwa air.",
+                    "Sungai, laut, danau → itu tempat air."
+                ]
+            },
+            {
+                question: "Air hujan berasal dari proses...",
+                options: ["Fotosintesis", "Penguapan air yang membentuk awan", "Gelombang laut", "Pergerakan tanah"],
+                answer: 1,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Air laut/sungai menguap → jadi awan → turun hujan.",
+                    "Fotosintesis → proses tumbuhan membuat makanan.",
+                    "Gelombang laut → hanya gerakan air laut.",
+                    "Pergerakan tanah → bukan penyebab hujan."
+                ]
+            },
+            {
+                question: "Sumber air bersih yang biasa dipakai masyarakat adalah...",
+                options: ["Sungai yang kotor", "Laut", "Sumur dan Mata Air", "Selokan"],
+                answer: 2,
+                explanation: "Penjelasan:",
+                explanationPoints: [
+                    "Air dari sumur dan mata air biasanya jernih dan bisa diminum setelah dimasak.",
+                    "Sungai yang kotor tidak layak diminum, Air laut asin dan Air selokan banyak sampah"
+                ]
+            },
+			{
+				question: "Jika kita membuang sampah ke sungai, akibatnya...",
+				options: ["Air menjadi bersih", "Air menjadi tercemar", "Air menjadi asin", "Air jadi berkurang"],
+				answer: 1,
+				explanation: "Penjelasan:",
+				explanationPoints: [
+				  "Sampah bikin air sungai kotor, bau, berbahaya.",
+				  "Air menjadi bersih → salah, justru kotor.",
+				  "Air menjadi asin → salah, sungai itu airnya tawar.",
+				  "Air jadi berkurang → salah, volume atau jumlah air tidak berubah, hanya tercemar."
+				]
+			},
+			{
+				question: "Proses perubahan air dari cair menjadi gas disebut...",
+				options: ["Mengembun", "Menguap", "Mencair", "Membeku"],
+				answer: 1,
+				explanation: "Penjelasan:",
+				explanationPoints: [
+				  "Air dipanaskan berubah jadi uap.",
+				  "Mengembun → gas jadi cair.",
+				  "Mencair → padat jadi cair.",
+				  "Membeku → cair jadi padat."
+				]
+			},
+			{ 
+			  question: "Air sangat penting bagi manusia karena...", 
+			  options: ["Bisa dijadikan hiasan", "Membantu bernapas", "Untuk minum, mandi, mencuci, dan memasak", "Hanya dipakai saat musim hujan"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanpa air, manusia tidak bisa hidup sehat.", 
+				"Bisa dijadikan hiasan → bukan manfaat utama.", 
+				"Membantu bernapas → yang membantu bernapas itu udara, bukan air.", 
+				"Hanya dipakai saat musim hujan → salah, air dipakai setiap hari." 
+			  ] 
+			},
+			{ 
+			  question: "Jika tidak ada air di bumi, maka...", 
+			  options: ["Manusia, hewan, dan tumbuhan bisa mati", "Bumi jadi semakin indah", "Semua akan lebih sehat", "Sungai menjadi lebih lebar"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Semua makhluk hidup butuh air.", 
+				"Bumi jadi semakin indah → salah, bumi justru kering.", 
+				"Semua akan lebih sehat → salah, tanpa air kita sakit.", 
+				"Sungai menjadi lebih lebar → salah, tanpa air sungai jadi kering." 
+			  ] 
+			},
+			{ 
+			  question: "Proses air hujan yang meresap ke dalam tanah disebut...", 
+			  options: ["Infiltrasi", "Evaporasi", "Kondensasi", "Sirkulasi"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Infiltrasi = air masuk ke tanah → jadi air tanah.", 
+				"Evaporasi → penguapan.", 
+				"Kondensasi → uap jadi cair.", 
+				"Sirkulasi → perputaran air secara umum." 
+			  ] 
+			},
+			{ 
+			  question: "Contoh sikap hemat air adalah...", 
+			  options: ["Membiarkan kran menyala terus", "Menggunakan air secukupnya saat mandi", "Mencuci motor dengan banyak air", "Bermain air sampai habis"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Hemat = tidak boros.", 
+				"Membiarkan kran menyala terus → boros.", 
+				"Mencuci motor dengan banyak air → boros.", 
+				"Bermain air sampai habis → boros." 
+			  ] 
+			},
+			{ 
+			  question: "Air tanah biasanya diperoleh dengan cara...", 
+			  options: ["Menyiram tanaman", "Menggali sumur", "Membakar sampah", "Menangkap ikan"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Sumur mengambil air yang tersimpan di tanah.", 
+				"Menyiram tanaman → pakai air, bukan dapat air.", 
+				"Membakar sampah → tidak ada hubungannya.", 
+				"Menangkap ikan → urusannya air, tapi bukan cara ambil air tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Hewan yang hidup di air dan darat adalah...", 
+			  options: ["Kucing", "Katak", "Burung", "Semut"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Katak bisa hidup di air (bertelur, berudu) dan di darat (dewasa).", 
+				"Kucing → hanya di darat.", 
+				"Burung → di darat/udara, bukan di air.", 
+				"Semut → hanya di darat." 
+			  ] 
+			},
+			{ 
+			  question: "Air laut tidak bisa langsung diminum karena...", 
+			  options: ["Rasanya manis", "Terlalu panas", "Asin dan mengandung garam tinggi", "Terlalu jernih"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Garam dalam air laut membuatnya tidak sehat diminum.", 
+				"Rasanya manis → salah.", 
+				"Terlalu panas → salah, suhu laut berbeda-beda.", 
+				"Terlalu jernih → salah, justru bersih belum tentu aman diminum." 
+			  ] 
+			},
+			{ 
+			  question: "Apa yang harus kita lakukan agar sumber air tetap bersih?", 
+			  options: ["Membuang sampah ke sungai", "Menjaga lingkungan dan tidak mencemari air", "Membiarkan limbah masuk ke sungai", "Menggunakan air seenaknya"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Dengan menjaga kebersihan, air tetap sehat.", 
+				"Membuang sampah ke sungai → justru mencemari.", 
+				"Membiarkan limbah masuk ke sungai → salah, bikin polusi.", 
+				"Menggunakan air seenaknya → boros, tidak menjaga." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah adalah…", 
+			  options: ["Air yang mengalir di sungai", "Lapisan bumi tempat tumbuhan tumbuh dan hewan hidup", "Batu keras di pegunungan", "Pasir di pantai"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Lapisan bumi tempat tumbuhan tumbuh dan hewan hidup.", 
+				"Air yang mengalir di sungai → itu air, bukan tanah.", 
+				"Batu keras di pegunungan → itu batu, bukan tanah.", 
+				"Pasir di pantai → hanya salah satu jenis tanah, bukan definisi tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah sangat penting bagi manusia karena…", 
+			  options: ["Menjadi tempat bercocok tanam", "Bisa dimakan langsung", "Digunakan sebagai minuman", "Hanya untuk bermain bola"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah penting karena menjadi tempat bercocok tanam.", 
+				"Bisa dimakan langsung → salah, tanah tidak bisa dimakan.", 
+				"Digunakan sebagai minuman → salah, minum air bukan tanah.", 
+				"Hanya untuk bermain bola → bukan fungsi utama tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah yang subur biasanya berwarna…", 
+			  options: ["Putih", "Hitam atau cokelat gelap", "Biru", "Kuning keemasan"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah subur berwarna hitam atau cokelat gelap.", 
+				"Putih → biasanya pasir/kapur, kurang subur.", 
+				"Biru → tidak ada tanah berwarna biru.", 
+				"Kuning keemasan → biasanya tanah liat, kurang subur." 
+			  ] 
+			},
+			{ 
+			  question: "Contoh tumbuhan yang hidup baik di tanah subur adalah…", 
+			  options: ["Pohon jagung dan padi", "Rumput laut", "Ganggang biru", "Teratai di kolam"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Pohon jagung dan padi hidup baik di tanah subur.", 
+				"Rumput laut → hidup di air laut.", 
+				"Ganggang biru → hidup di air, bukan di tanah.", 
+				"Teratai di kolam → hidup di air, bukan di tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah mengandung unsur hara (makanan untuk tanaman) yang dibutuhkan tumbuhan, salah satunya adalah…", 
+			  options: ["Garam dapur", "Nitrogen dan fosfor", "Gula pasir", "Minyak goreng"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Unsur hara penting di tanah adalah nitrogen dan fosfor, sedangkan garam, gula, dan minyak goreng bukan makanan untuk tanaman.", 
+				"Nitrogen adalah makanan tanaman yang membantu daun jadi hijau dan segar, contoh sayur bayam butuh nitrogen supaya daunnya lebar.", 
+				"Fosfor adalah makanan tanaman yang membuat akar kuat dan bunga atau buah bisa tumbuh baik, contoh tanaman mangga butuh fosfor supaya bisa berbuah"
+			  ] 
+			},
+			{ 
+			  question: "Jika tanah terus-menerus ditebang pohonnya, maka akan terjadi...", 
+			  options: ["Tanah makin subur", "Tanah mudah longsor dan banjir", "Tanah menjadi semakin luas", "Tanah jadi asin"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah jadi mudah longsor dan banjir.", 
+				"Tanah makin subur → salah, justru tandus.", 
+				"Tanah menjadi semakin luas → tidak benar.", 
+				"Tanah jadi asin → tidak ada hubungannya." 
+			  ] 
+			},
+			{ 
+			  question: "Proses perubahan batuan menjadi tanah disebut...", 
+			  options: ["Erosi", "Pelapukan", "Fotosintesis", "Penguapan"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Pelapukan adalah proses batuan jadi tanah.", 
+				"Erosi → tanah terbawa air/angin.", 
+				"Fotosintesis → tumbuhan membuat makanan.", 
+				"Penguapan → cair jadi gas." 
+			  ] 
+			},
+			{ 
+			  question: "Lapisan paling atas tanah yang subur disebut...", 
+			  options: ["Top soil (tanah humus)", "Batu induk", "Lapisan pasir", "Tanah liat keras"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Top soil (tanah humus) lapisan atas subur.", 
+				"Batu induk → lapisan dasar, bukan paling atas.", 
+				"Lapisan pasir → kurang subur.", 
+				"Tanah liat keras → sulit ditanami." 
+			  ] 
+			},
+			{ 
+			  question: "Salah satu jenis tanah yang baik untuk membuat genteng atau keramik adalah…", 
+			  options: ["Tanah liat", "Tanah humus", "Tanah berpasir", "Tanah berbatu"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah liat cocok untuk genteng/keramik.", 
+				"Tanah humus → untuk pertanian.", 
+				"Tanah berpasir → terlalu gembur, tidak bisa dibentuk.", 
+				"Tanah berbatu → keras, tidak bisa dibentuk." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah berpasir banyak ditemukan di daerah...", 
+			  options: ["Pantai", "Pegunungan", "Hutan hujan", "Perkotaan"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah berpasir banyak di pantai.", 
+				"Pegunungan → tanahnya biasanya subur/berbatu.", 
+				"Hutan hujan → tanah humus, subur.", 
+				"Perkotaan → campuran tanah dan bangunan." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah menjadi rusak jika…", 
+			  options: ["Dijaga dan dirawat", "Terkena pencemaran limbah dan sampah plastik", "Ditanami pohon", "Diberi pupuk organik"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Limbah dan plastik merusak tanah.", 
+				"Dijaga dan dirawat → membuat tanah tetap baik.", 
+				"Ditanami pohon → justru menyuburkan.", 
+				"Diberi pupuk organik → menyehatkan tanah." 
+			  ] 
+			},
+
+			{ 
+			  question: "Proses hilangnya lapisan tanah subur karena air hujan disebut...", 
+			  options: ["Irigasi", "Pengendapan", "Erosi", "Sedimentasi"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Erosi = hilangnya lapisan subur karena air/angin.", 
+				"Irigasi → mengairi sawah.", 
+				"Pengendapan → tanah mengendap.", 
+				"Sedimentasi → tanah terbawa air lalu mengendap." 
+			  ] 
+			},
+
+			{ 
+			  question: "Cara sederhana menjaga tanah tetap subur adalah...", 
+			  options: ["Membakar sampah plastik di atasnya", "Menanam pohon dan tidak menebang sembarangan", "Membuang limbah pabrik ke sawah", "Menutupinya dengan aspal"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Menanam pohon & tidak menebang sembarangan → menjaga kesuburan.", 
+				"Membakar sampah plastik → mencemari tanah.", 
+				"Membuang limbah pabrik → merusak tanah.", 
+				"Menutupinya dengan aspal → membuat tanah mati." 
+			  ] 
+			},
+
+			{ 
+			  question: "Hewan kecil yang membantu menyuburkan tanah dengan membuat lubang adalah...", 
+			  options: ["Ular", "Cacing tanah", "Tikus", "Semut api"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Cacing tanah menggemburkan tanah dengan membuat lubang.", 
+				"Ular → tidak menyuburkan tanah.", 
+				"Tikus → justru merusak.", 
+				"Semut api → bisa merusak dan menyengat." 
+			  ] 
+			},
+
+			{ 
+			  question: "Mengapa kita harus menjaga tanah?", 
+			  options: [
+				"Supaya tetap bisa dipakai untuk bercocok tanam dan kehidupan makhluk hidup", 
+				"Supaya bisa dijual ke negara lain", 
+				"Karena tanah bisa berubah jadi emas", 
+				"Agar warnanya tetap cokelat"
+			  ], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah penting untuk bercocok tanam & kehidupan makhluk hidup.", 
+				"Supaya bisa dijual → bukan alasan utama.", 
+				"Tanah jadi emas → salah.", 
+				"Agar warnanya cokelat → bukan alasannya." 
+			  ] 
+			},
+
+			{ 
+			  question: "Tanah merupakan bagian penting dari bumi karena...", 
+			  options: [
+				"Bisa dimakan manusia", 
+				"Tempat tumbuh tanaman dan hidup hewan", 
+				"Selalu berwarna hitam", 
+				"Tidak pernah berubah"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah adalah tempat tumbuh tanaman & hidup hewan.", 
+				"Bisa dimakan manusia → salah.", 
+				"Selalu hitam → salah, warna tanah bervariasi.", 
+				"Tidak pernah berubah → salah, bisa rusak atau subur." 
+			  ] 
+			},
+
+			{ 
+			  question: "Tanah yang banyak mengandung sisa tumbuhan dan hewan disebut...", 
+			  options: [
+				"Tanah liat", 
+				"Tanah humus", 
+				"Tanah berpasir", 
+				"Tanah kapur"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah humus berasal dari sisa tumbuhan & hewan, sangat subur.", 
+				"Tanah liat → terbentuk dari batuan.", 
+				"Tanah berpasir → dari pasir, kurang subur.", 
+				"Tanah kapur → dari batu kapur, kurang subur." 
+			  ] 
+			},
+
+			{ 
+			  question: "Tanah humus biasanya...", 
+			  options: [
+				"Keras dan kering", 
+				"Gembur dan subur", 
+				"Licin dan berair", 
+				"Berwarna putih"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah humus → gembur & subur.", 
+				"Keras & kering → tanah tandus.", 
+				"Licin & berair → tanah becek.", 
+				"Putih → tanah kapur." 
+			  ] 
+			},
+
+			{ 
+			  question: "Fungsi tanah bagi tumbuhan adalah…", 
+			  options: [
+				"Tempat tidur", 
+				"Menyimpan air dan unsur hara", 
+				"Tempat bermain", 
+				"Sumber cahaya"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah menyimpan air & unsur hara untuk tumbuhan.", 
+				"Tempat tidur → salah.", 
+				"Tempat bermain → salah.", 
+				"Sumber cahaya → salah, cahaya dari matahari." 
+			  ] 
+			},
+
+			{ 
+			  question: "Tanah liat sering digunakan untuk membuat…", 
+			  options: [
+				"Roti", 
+				"Genteng dan keramik", 
+				"Pakaian", 
+				"Kaca"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah liat → bahan genteng & keramik.", 
+				"Roti → dari tepung, bukan tanah.", 
+				"Pakaian → dari kain.", 
+				"Kaca → dari pasir." 
+			  ] 
+			},
+
+			{ 
+			  question: "Tanah berpasir banyak ditemukan di daerah…", 
+			  options: [
+				"Gunung es", 
+				"Pantai", 
+				"Hutan lebat", 
+				"Kota besar"
+			  ], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah berpasir → banyak di pantai.", 
+				"Gunung es → es, bukan pasir.", 
+				"Hutan lebat → tanah humus.", 
+				"Kota besar → tanah campuran." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah kapur biasanya kurang subur karena…", 
+			  options: ["Tidak bisa terkena air", "Sulit menyerap air dan miskin hara", "Berwarna hitam pekat", "Terlalu banyak lumpur"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Sulit menyerap air dan miskin hara.", 
+				"Tidak bisa terkena air → salah.", 
+				"Berwarna hitam pekat → itu tanah humus.", 
+				"Terlalu banyak lumpur → bukan tanah kapur." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah sangat penting bagi manusia karena…", 
+			  options: ["Bisa dipakai untuk bermain bola", "Menjadi tempat membangun rumah dan bercocok tanam", "Digunakan untuk bahan bakar", "Dapat dimakan langsung"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah tempat membangun rumah dan bercocok tanam.", 
+				"Bisa dipakai untuk bermain bola → bukan fungsi utama.", 
+				"Digunakan untuk bahan bakar → bukan tanah.", 
+				"Dapat dimakan langsung → salah." 
+			  ] 
+			},
+			{ 
+			  question: "Salah satu cara menjaga tanah agar tetap subur adalah…", 
+			  options: ["Membakar sampah di atas tanah", "Menebang semua pohon", "Menanam pohon dan memberi pupuk alami", "Membuang limbah ke sawah"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Menanam pohon dan memberi pupuk alami menjaga tanah tetap subur.", 
+				"Membakar sampah di atas tanah → merusak.", 
+				"Menebang semua pohon → merusak.", 
+				"Membuang limbah ke sawah → mencemari." 
+			  ] 
+			},
+			{ 
+			  question: "Proses hilangnya lapisan tanah subur karena hujan disebut…", 
+			  options: ["Sedimentasi", "Erosi", "Pelapukan", "Pengendapan"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Erosi = tanah terkikis air hujan.", 
+				"Sedimentasi → tanah mengendap.", 
+				"Pelapukan → batuan jadi tanah.", 
+				"Pengendapan → sama dengan sedimentasi." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah longsor bisa terjadi karena…", 
+			  options: ["Pohon ditebang sembarangan", "Tanah dijaga dengan baik", "Hutan semakin lebat", "Air hujan diserap tanah"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah longsor terjadi jika pohon ditebang sembarangan.", 
+				"Tanah dijaga dengan baik → aman.", 
+				"Hutan semakin lebat → aman.", 
+				"Air hujan diserap tanah → justru baik." 
+			  ] 
+			},
+			{ 
+			  question: "Hewan kecil yang membantu membuat tanah gembur adalah…", 
+			  options: ["Cacing tanah", "Semut api", "Ular", "Katak"], 
+			  answer: 0, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Cacing tanah menggemburkan tanah.", 
+				"Semut api → bisa merusak.", 
+				"Ular → tidak menyuburkan.", 
+				"Katak → bukan penggembur tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Tanah adalah karunia Tuhan yang harus dijaga karena…", 
+			  options: ["Tanah bisa dipakai main layangan", "Tanah bisa berubah menjadi emas", "Tanah menjadi sumber kehidupan bagi manusia, hewan, dan tumbuhan", "Tanah tidak bisa rusak"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Tanah sumber kehidupan manusia, hewan, tumbuhan.", 
+				"Tanah bisa dipakai main layangan → bukan alasan utama.", 
+				"Tanah bisa berubah menjadi emas → salah.", 
+				"Tanah tidak bisa rusak → salah, tanah bisa rusak." 
+			  ] 
+			},
+			{ 
+			  question: "Contoh kegiatan manusia yang merusak tanah adalah…", 
+			  options: ["Reboisasi", "Membuang sampah plastik sembarangan", "Menanam pohon di bukit", "Membuat pupuk kompos"], 
+			  answer: 1, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Membuang sampah plastik sembarangan merusak tanah.", 
+				"Reboisasi → menjaga tanah.", 
+				"Menanam pohon di bukit → menjaga tanah.", 
+				"Membuat pupuk kompos → menyuburkan tanah." 
+			  ] 
+			},
+			{ 
+			  question: "Jika tanah rusak dan tidak subur lagi, akibatnya adalah…", 
+			  options: ["Tanaman tumbuh subur", "Hutan semakin hijau", "Tanaman sulit tumbuh dan hewan kekurangan makanan", "Rumah menjadi indah"], 
+			  answer: 2, 
+			  explanation: "Penjelasan:", 
+			  explanationPoints: [ 
+				"Jika tanah rusak, tanaman sulit tumbuh dan hewan kekurangan makanan.", 
+				"Tanaman tumbuh subur → salah.", 
+				"Hutan semakin hijau → salah.", 
+				"Rumah menjadi indah → tidak ada hubungannya." 
+			  ] 
+			}	
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        // Fungsi untuk menampilkan soal
+        function showQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const question = questions[currentQuestion];
+            
+            // Update progress bar
+            document.getElementById('progress').style.width = `${((currentQuestion + 1) / questions.length) * 100}%`;
+            
+            // Update nomor soal
+            document.getElementById('question-number').textContent = `Soal ${currentQuestion + 1} dari ${questions.length}`;
+            
+            let optionsHtml = '';
+            question.options.forEach((option, index) => {
+                let optionClass = 'option';
+                
+                // Jika user sudah memilih jawaban untuk soal ini
+                if (userAnswers[currentQuestion] !== null) {
+                    if (index === question.answer) {
+                        optionClass += ' correct';
+                    } else if (index === userAnswers[currentQuestion] && index !== question.answer) {
+                        optionClass += ' incorrect';
+                    }
+                }
+                
+                optionsHtml += `
+                    <div class="${optionClass}" onclick="selectOption(${index})">
+                        ${String.fromCharCode(65 + index)}. ${option}
+                    </div>
+                `;
+            });
+            
+            // Tentukan feedback berdasarkan jawaban user
+            let feedbackHtml = '';
+            if (userAnswers[currentQuestion] !== null) {
+                const isCorrect = userAnswers[currentQuestion] === question.answer;
+                const feedbackClass = isCorrect ? 'correct-feedback' : 'incorrect-feedback';
+                const feedbackIcon = isCorrect ? '✓' : '✗';
+                const feedbackText = isCorrect ? 'Benar!' : 'Salah!';
+                
+                // Buat poin-poin penjelasan
+                let explanationPointsHtml = '';
+                if (question.explanationPoints) {
+                    question.explanationPoints.forEach(point => {
+                        const pointClass = point.includes('✓') || point.includes('(Jawaban benar)') ? 
+                                          'correct-point' : 
+                                          (point.includes('✗') ? 'incorrect-point' : '');
+                        explanationPointsHtml += `<div class="${pointClass}">${point}</div>`;
+                    });
+                }
+                
+                feedbackHtml = `
+                    <div class="result-feedback ${feedbackClass}">
+                        <span class="feedback-icon">${feedbackIcon}</span> ${feedbackText}
+                    </div>
+                    <div><strong>${question.explanation}</strong></div>
+                    <div class="explanation-points">
+                        ${explanationPointsHtml}
+                    </div>
+                `;
+            }
+            
+            questionContainer.innerHTML = `
+                <div class="question-container">
+                    <div class="question-text">${question.question}</div>
+                    <div class="options-container">
+                        ${optionsHtml}
+                    </div>
+                    ${userAnswers[currentQuestion] !== null ? `
+                        <div class="explanation" style="display: block;">
+                            ${feedbackHtml}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Update tombol navigasi
+            document.getElementById('prev-btn').disabled = currentQuestion === 0;
+            document.getElementById('next-btn').disabled = currentQuestion === questions.length - 1;
+            
+            // Update skor
+            updateScore();
+            
+            // Cek jika semua soal telah dijawab
+            checkCompletion();
+        }
+
+        // Fungsi untuk memilih opsi jawaban
+        function selectOption(optionIndex) {
+            if (userAnswers[currentQuestion] === null) {
+                userAnswers[currentQuestion] = optionIndex;
+                
+                // Jika jawaban benar, tambah skor
+                if (optionIndex === questions[currentQuestion].answer) {
+                    score++;
+                }
+                
+                showQuestion();
+            }
+        }
+
+        // Fungsi untuk pindah ke soal berikutnya
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        // Fungsi untuk kembali ke soal sebelumnya
+        function prevQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        // Fungsi untuk update skor
+        function updateScore() {
+            const scoreContainer = document.getElementById('score-container');
+            const answeredQuestions = userAnswers.filter(answer => answer !== null).length;
+            scoreContainer.textContent = `Skor: ${score} / ${answeredQuestions} (Total: ${questions.length})`;
+        }
+
+        // Fungsi untuk mengecek jika semua soal telah dijawab
+        function checkCompletion() {
+            const answeredQuestions = userAnswers.filter(answer => answer !== null).length;
+            if (answeredQuestions === questions.length) {
+                // Tampilkan pesan selamat
+                document.getElementById('final-score').textContent = `Skor akhir: ${score} / ${questions.length}`;
+                document.getElementById('celebrate').style.display = 'flex';
+            }
+        }
+
+        // Fungsi untuk menutup pesan selamat
+        function closeCelebration() {
+            document.getElementById('celebrate').style.display = 'none';
+        }
+
+        // Inisialisasi kuis
+        showQuestion();
+    </script>
+</body>
+</html>
